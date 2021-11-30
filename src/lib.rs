@@ -1,5 +1,16 @@
 #![allow(unused)]
-use std::{fmt::Debug, fs, path::Path};
+use std::{
+    fmt::{Debug, Display},
+    fs,
+    path::Path,
+};
+
+pub fn print_line() {
+    println!("+--------+------------------+------------------+");
+}
+pub fn pretty_print(day: usize, p1: impl Display, p2: impl Display) {
+    println!("| {0: <6} | {1: <16} | {2: <16} |", day, p1, p2);
+}
 
 fn load<P: AsRef<Path> + Debug + Copy>(path: P) -> String {
     #[allow(clippy::expect_fun_call)]
