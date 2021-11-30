@@ -5,3 +5,12 @@ version = 3
 [[package]]
 name = "aoc_2021"
 version = "0.1.0"
+dependencies = [
+ "interior_mutability_pointer",
+]
+
+[[package]]
+name = "interior_mutability_pointer"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6d65d18b0aacaa924bd6f4f40954cb46e451298fc0d8528d34050b1a62bf792f"
