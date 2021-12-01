@@ -4,6 +4,8 @@ mod day1;
 mod lib;
 fn main() {
     print_line();
+    println!("|           Welcome to my 2021 Advent of Code solution thing! 🤙🤠🤙           |");
+    print_line();
     println!(
         "| Day | {0: <16} | {1: <16} | {2: <32} |",
         "Part 1", "Part 2", "Time(s) = P1 + P2"
