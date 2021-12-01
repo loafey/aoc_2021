@@ -1,13 +1,11 @@
 use aoc_2021::load_to_pattern;
 
 pub fn part1() -> i32 {
-    let mut current = 0;
+    let mut current = std::i32::MAX;
     let mut incs = 0;
     load_to_pattern("input/day1.txt", |c| c == ' ')
         .map(|c| c.parse::<i32>().unwrap())
-        .enumerate()
-        .for_each(|(i, v)| {
-            current = v * (i == 0) as i32 + current * (i != 0) as i32;
+        .for_each(|v| {
             incs += (v > current) as i32;
             current = v;
         });
