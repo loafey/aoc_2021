@@ -3,7 +3,7 @@ use aoc_2021::{pretty_print, print_line};
 mod day1;
 mod lib;
 fn main() {
-    print_line();
+    println!("+------------------------------------------------------------------------------+");
     println!("|           Welcome to my 2021 Advent of Code solution thing! 🤙🤠🤙           |");
     print_line();
     println!(
