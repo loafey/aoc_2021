@@ -19,12 +19,16 @@ pub fn pretty_print<A: Display, B: Display>(day: usize, p1: fn() -> A, p2: fn() 
     let v2 = p2();
     let t2 = timer.elapsed().as_secs_f32();
 
+    let t = format!("{:.4} = {:.4} + {:.4}", t1 + t2, t1, t2);
+    let day = if day < 10 {
+        format!(" {0: <2}", day)
+    } else {
+        format!("{0: <3}", day)
+    };
+
     println!(
         "│ {0: <3} │ {1: <16} │ {2: <16} │ {3: <32} │",
-        day,
-        v1,
-        v2,
-        format!("{:.4} = {:.4} + {:.4}", t1 + t2, t1, t2)
+        day, v1, v2, t
     );
 }
 
