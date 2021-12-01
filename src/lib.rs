@@ -10,7 +10,7 @@ use std::{
 pub fn print_line() {
     println!("+--------+------------------+------------------+----------------------------------+");
 }
-pub fn pretty_print(day: usize, p1: fn() -> i32, p2: fn() -> i32) {
+pub fn pretty_print<A: Display, B: Display>(day: usize, p1: fn() -> A, p2: fn() -> B) {
     let timer = Instant::now();
     let v1 = p1();
     let t1 = timer.elapsed().as_secs_f32();
