@@ -8,7 +8,7 @@ use std::{
 };
 
 pub fn print_line() {
-    println!("+-----+------------------+------------------+----------------------------------+");
+    println!("├─────┼──────────────────┼──────────────────┼──────────────────────────────────┤");
 }
 pub fn pretty_print<A: Display, B: Display>(day: usize, p1: fn() -> A, p2: fn() -> B) {
     let timer = Instant::now();
@@ -20,7 +20,7 @@ pub fn pretty_print<A: Display, B: Display>(day: usize, p1: fn() -> A, p2: fn() 
     let t2 = timer.elapsed().as_secs_f32();
 
     println!(
-        "| {0: <3} | {1: <16} | {2: <16} | {3: <32} |",
+        "│ {0: <3} │ {1: <16} │ {2: <16} │ {3: <32} │",
         day,
         v1,
         v2,
