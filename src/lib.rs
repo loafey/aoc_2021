@@ -10,14 +10,14 @@ use std::{
 pub fn print_line() {
     println!("├─────┼──────────────────┼──────────────────┼──────────────────────────────────┤");
 }
-pub fn pretty_print<A: Display, B: Display>(day: usize, p1: fn() -> A, p2: fn() -> B) {
+pub fn print_func<A: Display, B: Display>(day: usize, p1: fn() -> A, p2: fn() -> B) -> f64 {
     let timer = Instant::now();
     let v1 = p1();
-    let t1 = timer.elapsed().as_secs_f32();
+    let t1 = timer.elapsed().as_secs_f64();
 
     let timer = Instant::now();
     let v2 = p2();
-    let t2 = timer.elapsed().as_secs_f32();
+    let t2 = timer.elapsed().as_secs_f64();
 
     let t = format!("{:.4} = {:.4} + {:.4}", t1 + t2, t1, t2);
     let day = if day < 10 {
@@ -30,6 +30,7 @@ pub fn pretty_print<A: Display, B: Display>(day: usize, p1: fn() -> A, p2: fn() 
         "│ {0: <3} │ {1: <16} │ {2: <16} │ {3: <32} │",
         day, v1, v2, t
     );
+    t1 + t2
 }
 
 fn load<P: AsRef<Path> + Debug + Copy>(path: P) -> String {
