@@ -5,8 +5,8 @@ mod lib;
 fn main() {
     print_line();
     println!(
-        "| {0: <6} | {1: <16} | {2: <16} | {3: <32} |",
-        "Day", "Part 1", "Part 2", "Time(s) = P1 + P2"
+        "| Day | {0: <16} | {1: <16} | {2: <32} |",
+        "Part 1", "Part 2", "Time(s) = P1 + P2"
     );
     print_line();
 
