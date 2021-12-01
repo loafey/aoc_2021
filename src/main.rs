@@ -37,32 +37,35 @@ fn main() {
     );
     print_line();
 
-    let mut tt = 0.0;
-    tt += print_func(1, day1::part1, day1::part2);
-    tt += print_func(2, day2::part1, day2::part2);
-    tt += print_func(3, day3::part1, day3::part2);
-    tt += print_func(4, day4::part1, day4::part2);
-    tt += print_func(5, day5::part1, day5::part2);
-    tt += print_func(6, day6::part1, day6::part2);
-    tt += print_func(7, day7::part1, day7::part2);
-    tt += print_func(8, day8::part1, day8::part2);
-    tt += print_func(9, day9::part1, day9::part2);
-    tt += print_func(10, day10::part1, day10::part2);
-    tt += print_func(11, day11::part1, day11::part2);
-    tt += print_func(12, day12::part1, day12::part2);
-    tt += print_func(13, day13::part1, day13::part2);
-    tt += print_func(14, day14::part1, day14::part2);
-    tt += print_func(15, day15::part1, day15::part2);
-    tt += print_func(16, day16::part1, day16::part2);
-    tt += print_func(17, day17::part1, day17::part2);
-    tt += print_func(18, day18::part1, day18::part2);
-    tt += print_func(19, day19::part1, day19::part2);
-    tt += print_func(20, day20::part1, day20::part2);
-    tt += print_func(21, day21::part1, day21::part2);
-    tt += print_func(22, day22::part1, day22::part2);
-    tt += print_func(23, day23::part1, day23::part2);
-    tt += print_func(24, day24::part1, day24::part2);
-    tt += print_func(25, day25::part1, day25::part2);
+    let tt = vec![
+        print_func(1, day1::part1, day1::part2),
+        print_func(2, day2::part1, day2::part2),
+        print_func(3, day3::part1, day3::part2),
+        print_func(4, day4::part1, day4::part2),
+        print_func(5, day5::part1, day5::part2),
+        print_func(6, day6::part1, day6::part2),
+        print_func(7, day7::part1, day7::part2),
+        print_func(8, day8::part1, day8::part2),
+        print_func(9, day9::part1, day9::part2),
+        print_func(10, day10::part1, day10::part2),
+        print_func(11, day11::part1, day11::part2),
+        print_func(12, day12::part1, day12::part2),
+        print_func(13, day13::part1, day13::part2),
+        print_func(14, day14::part1, day14::part2),
+        print_func(15, day15::part1, day15::part2),
+        print_func(16, day16::part1, day16::part2),
+        print_func(17, day17::part1, day17::part2),
+        print_func(18, day18::part1, day18::part2),
+        print_func(19, day19::part1, day19::part2),
+        print_func(20, day20::part1, day20::part2),
+        print_func(21, day21::part1, day21::part2),
+        print_func(22, day22::part1, day22::part2),
+        print_func(23, day23::part1, day23::part2),
+        print_func(24, day24::part1, day24::part2),
+        print_func(25, day25::part1, day25::part2),
+    ]
+    .iter()
+    .sum::<f64>();
 
     println!("├─────┴──────────────────┴──────────────────┴──────────────────────────────────┤");
     println!("│ Total time: {0: <64} │", format!("{:.5}m", tt / 60.0));
