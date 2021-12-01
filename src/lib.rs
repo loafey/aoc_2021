@@ -3,14 +3,29 @@ use std::{
     fmt::{Debug, Display},
     fs,
     path::Path,
+    time::Instant,
     vec::IntoIter,
 };
 
 pub fn print_line() {
-    println!("+--------+------------------+------------------+");
+    println!("+--------+------------------+------------------+----------------------------------+");
 }
-pub fn pretty_print(day: usize, p1: impl Display, p2: impl Display) {
-    println!("| {0: <6} | {1: <16} | {2: <16} |", day, p1, p2);
+pub fn pretty_print(day: usize, p1: fn() -> i32, p2: fn() -> i32) {
+    let timer = Instant::now();
+    let v1 = p1();
+    let t1 = timer.elapsed().as_secs_f32();
+
+    let timer = Instant::now();
+    let v2 = p2();
+    let t2 = timer.elapsed().as_secs_f32();
+
+    println!(
+        "| {0: <6} | {1: <16} | {2: <16} | {3: <32} |",
+        day,
+        v1,
+        v2,
+        format!("{:.4} = {:.4} + {:.4}", t1 + t2, t1, t2)
+    );
 }
 
 fn load<P: AsRef<Path> + Debug + Copy>(path: P) -> String {
