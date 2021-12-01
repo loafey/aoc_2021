@@ -11,7 +11,6 @@ pub fn part1() -> i32 {
             incs += (v > current) as i32;
             current = v;
         });
-
     incs
 }
 
