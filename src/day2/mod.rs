@@ -1,24 +1,17 @@
-use aoc_2021::load_to_rows_and_pattern;
+use aoc_2021::load_to_pattern;
 
 pub fn part1() -> i32 {
     let mut hoz = 0;
     let mut dep = 0;
-    let mut direction: Option<String> = None;
-    load_to_rows_and_pattern("input/day2.txt", |c| c == ' ').for_each(|r| {
-        r.for_each(|s| {
-            if let Ok(p) = s.parse::<i32>() {
-                match &direction.as_ref().unwrap()[..] {
-                    "forward" => {
-                        hoz += p;
-                    }
-                    "down" => dep += p,
-                    "up" => dep -= p,
-                    _ => {}
-                }
-            } else {
-                direction = Some(s);
-            }
-        })
+    let mut direction = String::new();
+    load_to_pattern("input/day2.txt", |c| c == ' ').for_each(|w| match w.parse::<i32>() {
+        Ok(v) => match &direction[..] {
+            "forward" => hoz += v,
+            "down" => dep += v,
+            "up" => dep -= v,
+            _ => {}
+        },
+        Err(_) => direction = w,
     });
 
     hoz * dep
@@ -28,23 +21,18 @@ pub fn part2() -> i32 {
     let mut hoz = 0;
     let mut dep = 0;
     let mut aim = 0;
-    let mut direction: Option<String> = None;
-    load_to_rows_and_pattern("input/day2.txt", |c| c == ' ').for_each(|r| {
-        r.for_each(|s| {
-            if let Ok(p) = s.parse::<i32>() {
-                match &direction.as_ref().unwrap()[..] {
-                    "forward" => {
-                        hoz += p;
-                        dep += p * aim;
-                    }
-                    "down" => aim += p,
-                    "up" => aim -= p,
-                    _ => {}
-                }
-            } else {
-                direction = Some(s);
+    let mut direction = String::new();
+    load_to_pattern("input/day2.txt", |c| c == ' ').for_each(|w| match w.parse::<i32>() {
+        Ok(v) => match &direction[..] {
+            "forward" => {
+                hoz += v;
+                dep += v * aim;
             }
-        })
+            "down" => aim += v,
+            "up" => aim -= v,
+            _ => {}
+        },
+        Err(_) => direction = w,
     });
 
     hoz * dep
