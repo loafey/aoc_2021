@@ -24,7 +24,7 @@ pub fn print_func<A: Display, B: Display>(day: usize, p1: fn() -> A, p2: fn() ->
         format!("{0: <3}", day)
     };
     // Ugly as shit solution so it doesn't print anything if both values are empty  🤙🤠🤙
-    if format!("{}", v1).is_empty() && format!("{}", v2).is_empty() {
+    if !(format!("{}", v1).is_empty() && format!("{}", v2).is_empty()) {
         println!(
             "│ {0: <3} │ {1: <16} │ {2: <16} │ {3: <32} │",
             day, v1, v2, t
