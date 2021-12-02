@@ -9,8 +9,9 @@ use std::{
 
 pub struct FunctionBenchmark {
     day: usize,
-    time1: f64,
-    time2: f64,
+    time1: u128,
+    time2: u128,
+    total: f64,
     result1: Box<dyn Display>,
     result2: Box<dyn Display>,
 }
@@ -20,26 +21,30 @@ pub fn benchmark_function<A: Display + 'static, B: Display + 'static>(
     p1: fn() -> A,
     p2: fn() -> B,
 ) -> FunctionBenchmark {
+    let mut total = 0.0;
     let timer = Instant::now();
     let v1 = p1();
-    let t1 = timer.elapsed().as_secs_f64();
+    let t1 = timer.elapsed().as_micros();
+    total += timer.elapsed().as_secs_f64();
 
     let timer = Instant::now();
     let v2 = p2();
-    let t2 = timer.elapsed().as_secs_f64();
+    let t2 = timer.elapsed().as_micros();
+    total += timer.elapsed().as_secs_f64();
     FunctionBenchmark {
         day,
         time1: t1,
         time2: t2,
         result1: Box::new(v1),
         result2: Box::new(v2),
+        total,
     }
 }
 
 fn calculate_string_lens(v: &[FunctionBenchmark]) -> (usize, usize, usize) {
     let mut part1_len = 0;
     let mut part2_len = 0;
-    let mut time_len = 0;
+    let mut time_len = 18; // the size of the time display thing
     v.iter().for_each(|f| {
         let l1 = format!("{}", f.result1).len();
         let l2 = format!("{}", f.result2).len();
@@ -130,11 +135,10 @@ pub fn pretty_print_benchmarks(nice_text: &str, v: &[FunctionBenchmark]) {
     {
         let part1 = format!("Part 1{}", " ".repeat(part1_len - 6));
         let part2 = format!("Part 2{}", " ".repeat(part2_len - 6));
-        let time = format!("Time(s) = P1 + P2{}", " ".repeat(time_len - 17));
+        let time = format!("Time(µs) = P1 + P2{}", " ".repeat(time_len - 18));
         println!("│ Day │ {} │ {} │ {} │", part1, part2, time);
     }
     print_line('─', '├', '┤', '┼', part1_len, part2_len, time_len);
-
     let mut tt = 0.0;
     v.iter().for_each(|f| {
         let mut formated_part1 = format!("{}", f.result1);
@@ -170,7 +174,7 @@ pub fn pretty_print_benchmarks(nice_text: &str, v: &[FunctionBenchmark]) {
             );
         }
 
-        tt += f.time1 + f.time2;
+        tt += f.total;
     });
 
     print_line('─', '├', '┤', '┴', part1_len, part2_len, time_len);
