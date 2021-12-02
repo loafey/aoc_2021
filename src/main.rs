@@ -1,4 +1,4 @@
-use aoc_2021::{print_func, print_line};
+use aoc_2021::print_func;
 
 mod day1;
 mod day10;
@@ -35,7 +35,7 @@ fn main() {
         "│ Day │ {0: <16} │ {1: <16} │ {2: <32} │",
         "Part 1", "Part 2", "Time(s) = P1 + P2"
     );
-    print_line();
+    println!("├─────┼──────────────────┼──────────────────┼──────────────────────────────────┤");
 
     let tt = vec![
         print_func(1, day1::part1, day1::part2),

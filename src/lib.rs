@@ -7,9 +7,6 @@ use std::{
     vec::IntoIter,
 };
 
-pub fn print_line() {
-    println!("├─────┼──────────────────┼──────────────────┼──────────────────────────────────┤");
-}
 pub fn print_func<A: Display, B: Display>(day: usize, p1: fn() -> A, p2: fn() -> B) -> f64 {
     let timer = Instant::now();
     let v1 = p1();
