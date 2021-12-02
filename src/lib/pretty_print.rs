@@ -42,8 +42,8 @@ pub fn benchmark_function<A: Display + 'static, B: Display + 'static>(
 }
 
 fn calculate_string_lens(v: &[FunctionBenchmark]) -> (usize, usize, usize) {
-    let mut part1_len = 0;
-    let mut part2_len = 0;
+    let mut part1_len = 6;
+    let mut part2_len = 6;
     let mut time_len = 18; // the size of the time display thing
     v.iter().for_each(|f| {
         let l1 = format!("{}", f.result1).len();
