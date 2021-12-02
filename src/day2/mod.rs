@@ -1,6 +1,5 @@
 use aoc_2021::load_to_pattern;
 
-// 0.0024
 pub fn part1() -> i32 {
     let mut hoz = 0;
     let mut dep = 0;
