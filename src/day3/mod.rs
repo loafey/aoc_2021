@@ -1,7 +1,7 @@
 pub fn part1() -> String {
-    String::new()
+    "ooooooooooooooooooooooooooooooooooooooooooooooooooooo".to_string()
 }
 
 pub fn part2() -> String {
-    String::new()
+    "ooooooooooooooooooooooooooooooooooooooooooooooooooooo".to_string()
 }
