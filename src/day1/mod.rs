@@ -1,4 +1,4 @@
-use aoc_2021::load_to_pattern;
+use crate::load_to_pattern;
 
 pub fn part1() -> i32 {
     let mut current = std::i32::MAX;
