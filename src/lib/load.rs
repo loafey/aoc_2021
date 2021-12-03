@@ -61,9 +61,7 @@ pub fn load_to_matrix_transpose<A>(path: A) -> IntoIter<IntoIter<char>>
 where
     A: AsRef<Path> + Debug + Copy,
 {
-    let m: Vec<Vec<_>> = load_to_matrix("input/day3example.txt")
-        .map(|v| v.collect())
-        .collect();
+    let m: Vec<Vec<_>> = load_to_matrix(path).map(|v| v.collect()).collect();
     let mut collums = vec![];
     for y in 0..m[0].len() {
         let mut collumn = vec![];
@@ -79,7 +77,7 @@ pub fn load_to_matrix_90deg<A>(path: A) -> IntoIter<IntoIter<char>>
 where
     A: AsRef<Path> + Debug + Copy,
 {
-    let m: Vec<Vec<_>> = load_to_matrix("input/day3example.txt")
+    let m: Vec<Vec<_>> = load_to_matrix(path)
         .map(|v| {
             let mut v = v.collect::<Vec<_>>();
             v.reverse();
