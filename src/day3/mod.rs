@@ -1,32 +1,22 @@
-use crate::load_to_matrix;
+use crate::{load_to_matrix, load_to_matrix_transpose};
 
 pub fn part1() -> i32 {
-    let m: Vec<Vec<_>> = load_to_matrix("input/day3.txt")
-        .map(|v| v.collect())
-        .collect();
-
     let mut gamma = String::new();
     let mut epsilion = String::new();
-    for y in 0..m[0].len() {
+    load_to_matrix_transpose("input/day3.txt").for_each(|c| {
         let mut zero_amount = 0;
         let mut one_amount = 0;
-        for x in 0..m.len() {
-            let v = m[x][y];
-            match v {
-                '0' => zero_amount += 1,
-                '1' => one_amount += 1,
-                _ => {}
-            }
-        }
+        c.for_each(|c| {
+            zero_amount += (c == '0') as i32;
+            one_amount += (c == '1') as i32
+        });
         let most_common = if zero_amount > one_amount { '0' } else { '1' };
         let least_common = if zero_amount > one_amount { '1' } else { '0' };
         gamma.push(most_common);
         epsilion.push(least_common);
-    }
-    let gamma = i32::from_str_radix(&gamma, 2).unwrap();
-    let epsilion = i32::from_str_radix(&epsilion, 2).unwrap();
+    });
 
-    gamma * epsilion
+    i32::from_str_radix(&gamma, 2).unwrap() * i32::from_str_radix(&epsilion, 2).unwrap()
 }
 
 pub fn part2() -> i32 {
