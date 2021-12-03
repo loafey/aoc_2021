@@ -5,17 +5,6 @@ fn load<P: AsRef<Path> + Debug + Copy>(path: P) -> String {
     fs::read_to_string(path).expect(&format!("Failed to find file {:?}!", path))
 }
 
-pub fn load_to_matrix<A>(path: A) -> IntoIter<IntoIter<char>>
-where
-    A: AsRef<Path> + Debug + Copy,
-{
-    load(path)
-        .split('\n')
-        .map(|r| r.chars().collect::<Vec<_>>().into_iter())
-        .collect::<Vec<_>>()
-        .into_iter()
-}
-
 pub fn load_to_rows<A>(path: A) -> IntoIter<String>
 where
     A: AsRef<Path> + Debug + Copy,
@@ -57,6 +46,17 @@ where
         .into_iter()
 }
 
+pub fn load_to_matrix<A>(path: A) -> IntoIter<IntoIter<char>>
+where
+    A: AsRef<Path> + Debug + Copy,
+{
+    load(path)
+        .split('\n')
+        .map(|r| r.chars().collect::<Vec<_>>().into_iter())
+        .collect::<Vec<_>>()
+        .into_iter()
+}
+
 pub fn load_to_matrix_transpose<A>(path: A) -> IntoIter<IntoIter<char>>
 where
     A: AsRef<Path> + Debug + Copy,
@@ -71,6 +71,24 @@ where
         collums.push(collumn.into_iter());
     }
     collums.into_iter()
+}
+
+pub fn load_to_matrix_nat<A>(path: A) -> (IntoIter<IntoIter<char>>, IntoIter<IntoIter<char>>)
+where
+    A: AsRef<Path> + Debug + Copy,
+{
+    let m = load_to_matrix(path);
+    let v = m.clone().map(|r| r.collect::<Vec<_>>()).collect::<Vec<_>>();
+    let mut collums = vec![];
+    for y in 0..v[0].len() {
+        let mut collumn = vec![];
+        for x in &v {
+            collumn.push(x[y]);
+        }
+        collums.push(collumn.into_iter());
+    }
+    let mt = collums.into_iter();
+    (m, mt)
 }
 
 pub fn load_to_matrix_90deg<A>(path: A) -> IntoIter<IntoIter<char>>
