@@ -5,11 +5,9 @@ fn load<P: AsRef<Path> + Debug + Copy>(path: P) -> String {
     fs::read_to_string(path).expect(&format!("Failed to find file {:?}!", path))
 }
 
-pub fn load_to_matrix<A, B, C>(path: A) -> IntoIter<IntoIter<char>>
+pub fn load_to_matrix<A>(path: A) -> IntoIter<IntoIter<char>>
 where
     A: AsRef<Path> + Debug + Copy,
-    B: FromIterator<char>,
-    C: FromIterator<B>,
 {
     load(path)
         .split('\n')
