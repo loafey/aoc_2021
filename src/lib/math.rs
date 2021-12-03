@@ -1,6 +1,6 @@
 use std::vec::IntoIter;
 
-type Matrix<A> = IntoIter<IntoIter<A>>;
+pub type Matrix<A> = IntoIter<IntoIter<A>>;
 pub fn rotate_90deg<A: Copy>(m: Matrix<A>) -> Matrix<A> {
     let m = m
         .map(|r| {
