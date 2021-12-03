@@ -23,54 +23,46 @@ fn scrubby_scrub_scrub(
     start_index: usize,
     zc: char,
     oc: char,
-    mut c02_list: Vec<Vec<char>>,
+    mut dirty_list: Vec<Vec<char>>,
 ) -> i32 {
-    for index in start_index..c02_list[0].len() {
+    for index in start_index..dirty_list[0].len() {
         let mut zero_amount = 0;
         let mut one_amount = 0;
-        for o in &c02_list {
-            if o[index] == '0' {
-                zero_amount += 1
-            } else {
-                one_amount += 1
-            }
+        for o in &dirty_list {
+            zero_amount += (o[index] == '0') as i32;
+            one_amount += (o[index] == '1') as i32
         }
-        c02_list = c02_list
+        dirty_list = dirty_list
             .into_iter()
             .filter(|o| o[index] == if zero_amount <= one_amount { zc } else { oc })
             .collect();
-        if c02_list.len() == 1 {
+        if dirty_list.len() == 1 {
             break;
         }
     }
 
-    i32::from_str_radix(&c02_list[0].clone().into_iter().collect::<String>(), 2).unwrap()
+    i32::from_str_radix(&dirty_list[0].clone().into_iter().collect::<String>(), 2).unwrap()
 }
 pub fn part2() -> i32 {
     let m = load_to_matrix("input/day3.txt");
-    let mt = transpose(m.clone());
 
-    let most_commons = mt
-        .map(|c| {
-            let mut zero_amount = 0;
-            let mut one_amount = 0;
-            c.for_each(|c| {
-                zero_amount += (c == '0') as i32;
-                one_amount += (c == '1') as i32
-            });
-            if zero_amount > one_amount {
-                '0'
-            } else {
-                '1'
-            }
-        })
-        .collect::<Vec<_>>();
+    let most_common = {
+        let c = transpose(m.clone()).next().unwrap();
+        let mut zero_amount = 0;
+        let mut one_amount = 0;
+        c.for_each(|c| {
+            zero_amount += (c == '0') as i32;
+            one_amount += (c == '1') as i32
+        });
+        (((zero_amount > one_amount) as u8 * b'0') + ((zero_amount <= one_amount) as u8 * b'1'))
+            as char
+    };
 
     let mut oxygen_list = vec![];
     let mut c02_list = vec![];
     m.for_each(|r| {
         let r = r.collect::<Vec<_>>();
-        if r[0] == most_commons[0] {
+        if r[0] == most_common {
             oxygen_list.push(r);
         } else {
             c02_list.push(r);
