@@ -56,3 +56,43 @@ where
         .collect::<Vec<_>>()
         .into_iter()
 }
+
+pub fn load_to_matrix_transpose<A>(path: A) -> IntoIter<IntoIter<char>>
+where
+    A: AsRef<Path> + Debug + Copy,
+{
+    let m: Vec<Vec<_>> = load_to_matrix("input/day3example.txt")
+        .map(|v| v.collect())
+        .collect();
+    let mut collums = vec![];
+    for y in 0..m[0].len() {
+        let mut collumn = vec![];
+        for x in &m {
+            collumn.push(x[y]);
+        }
+        collums.push(collumn.into_iter());
+    }
+    collums.into_iter()
+}
+
+pub fn load_to_matrix_90deg<A>(path: A) -> IntoIter<IntoIter<char>>
+where
+    A: AsRef<Path> + Debug + Copy,
+{
+    let m: Vec<Vec<_>> = load_to_matrix("input/day3example.txt")
+        .map(|v| {
+            let mut v = v.collect::<Vec<_>>();
+            v.reverse();
+            v
+        })
+        .collect(); // Reversed;
+    let mut collums = vec![];
+    for y in 0..m[0].len() {
+        let mut collumn = vec![];
+        for x in &m {
+            collumn.push(x[y]);
+        }
+        collums.push(collumn.into_iter());
+    }
+    collums.into_iter()
+}
