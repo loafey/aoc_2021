@@ -1,9 +1,9 @@
-use crate::{load_to_matrix, load_to_matrix_nat, load_to_matrix_transpose};
+use crate::{load_to_matrix, math::transpose};
 
 pub fn part1() -> i32 {
     let mut gamma = String::new();
     let mut epsilion = String::new();
-    load_to_matrix_transpose("input/day3.txt").for_each(|c| {
+    transpose(load_to_matrix("input/day3.txt")).for_each(|c| {
         let mut zero_amount = 0;
         let mut one_amount = 0;
         c.for_each(|c| {
@@ -47,7 +47,8 @@ fn scrubby_scrub_scrub(
     i32::from_str_radix(&c02_list[0].clone().into_iter().collect::<String>(), 2).unwrap()
 }
 pub fn part2() -> i32 {
-    let (m, mt) = load_to_matrix_nat("input/day3.txt");
+    let m = load_to_matrix("input/day3.txt");
+    let mt = transpose(m.clone());
 
     let most_commons = mt
         .map(|c| {
