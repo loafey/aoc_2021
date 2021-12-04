@@ -1,4 +1,4 @@
-use core::fmt;
+use core::{fmt, num};
 
 use crate::load;
 
@@ -9,6 +9,31 @@ struct Board {
     paper: Vec<Vec<Num>>,
 }
 impl Board {
+    fn load_input(s: String) -> (Vec<Board>, Vec<i32>) {
+        let mut s = s.split("\n\n");
+        let numbers = s
+            .next()
+            .unwrap()
+            .split(',')
+            .map(|s| s.parse::<i32>().unwrap())
+            .collect();
+
+        let boards = s
+            .map(|b_str| {
+                Board::new(
+                    &b_str
+                        .split('\n')
+                        .map(|r| r.split(' '))
+                        .flatten()
+                        .filter(|s| !s.is_empty())
+                        .map(|s| s.parse::<i32>().unwrap())
+                        .collect::<Vec<_>>(),
+                )
+            })
+            .collect::<Vec<_>>();
+        (boards, numbers)
+    }
+
     fn new(nums: &[i32]) -> Self {
         let mut paper = Vec::with_capacity(BOARD_SIZE);
 
@@ -106,29 +131,9 @@ impl fmt::Display for Num {
 }
 
 pub fn part1() -> i32 {
-    let s = load("input/day4.txt");
-    let mut s = s.split("\n\n");
-    let numbers = s
-        .next()
-        .unwrap()
-        .split(',')
-        .map(|s| s.parse::<i32>().unwrap());
-    let mut ans = i32::MIN;
+    let (mut boards, numbers) = Board::load_input(load("input/day4.txt"));
 
-    let mut boards = s
-        .map(|b_str| {
-            Board::new(
-                &b_str
-                    .split('\n')
-                    .map(|r| r.split(' '))
-                    .flatten()
-                    .filter(|s| !s.is_empty())
-                    .map(|s| s.parse::<i32>().unwrap())
-                    .collect::<Vec<_>>(),
-            )
-        })
-        .collect::<Vec<_>>();
-
+    let mut ans = 0;
     for n in numbers {
         let mut found_winner = false;
         boards.iter_mut().for_each(|b| {
@@ -146,29 +151,9 @@ pub fn part1() -> i32 {
 }
 
 pub fn part2() -> i32 {
-    let s = load("input/day4.txt");
-    let mut s = s.split("\n\n");
-    let numbers = s
-        .next()
-        .unwrap()
-        .split(',')
-        .map(|s| s.parse::<i32>().unwrap());
-    let mut ans = i32::MIN;
+    let (mut boards, numbers) = Board::load_input(load("input/day4.txt"));
 
-    let mut boards = s
-        .map(|b_str| {
-            Board::new(
-                &b_str
-                    .split('\n')
-                    .map(|r| r.split(' '))
-                    .flatten()
-                    .filter(|s| !s.is_empty())
-                    .map(|s| s.parse::<i32>().unwrap())
-                    .collect::<Vec<_>>(),
-            )
-        })
-        .collect::<Vec<_>>();
-
+    let mut ans = 0;
     for n in numbers {
         let new_boards = boards
             .clone()
