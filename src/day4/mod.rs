@@ -1,5 +1,3 @@
-use core::{fmt, num};
-
 use crate::load;
 
 const BOARD_SIZE: usize = 5;
