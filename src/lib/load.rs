@@ -1,7 +1,7 @@
 use crate::math::Matrix;
 use std::{fmt::Debug, fs, path::Path, vec::IntoIter};
 
-fn load<P: AsRef<Path> + Debug + Copy>(path: P) -> String {
+pub fn load<P: AsRef<Path> + Debug + Copy>(path: P) -> String {
     #[allow(clippy::expect_fun_call)]
     fs::read_to_string(path).expect(&format!("Failed to find file {:?}!", path))
 }
