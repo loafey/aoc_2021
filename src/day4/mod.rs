@@ -134,17 +134,17 @@ pub fn part2() -> i32 {
 
     let mut ans = 0;
     for n in numbers {
-        let new_boards = boards
-            .clone()
-            .into_iter()
-            .map(|mut b| {
-                b.add_num(n);
-                b
-            })
-            .filter(|b| b.won(n).is_none())
-            .collect::<Vec<_>>();
-        if !new_boards.is_empty() {
-            boards = new_boards;
+        let mut boards_to_remove = vec![];
+        boards.iter_mut().enumerate().for_each(|(i, b)| {
+            b.add_num(n);
+            if b.won(n).is_some() {
+                boards_to_remove.push(i)
+            }
+        });
+        if boards_to_remove.len() != boards.len() {
+            for (quantifier, i) in boards_to_remove.into_iter().enumerate() {
+                boards.remove(i - quantifier);
+            }
         } else {
             boards[0].add_num(n);
             if let Some(v) = boards[0].won(n) {
