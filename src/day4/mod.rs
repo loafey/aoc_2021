@@ -97,16 +97,6 @@ impl Board {
         }
     }
 }
-impl fmt::Display for Board {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
-        let mut s = String::new();
-        self.paper.iter().for_each(|r| {
-            r.iter().for_each(|v| s.push_str(&format!("{}", v)));
-            s.push('\n')
-        });
-        s.fmt(f)
-    }
-}
 
 #[derive(Clone, Copy, Debug)]
 struct Num {
@@ -116,17 +106,6 @@ struct Num {
 impl Num {
     fn new(val: i32) -> Self {
         Self { val, found: false }
-    }
-}
-impl fmt::Display for Num {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
-        let mut s = String::new();
-        if self.found {
-            s.push_str("\x1b[1;31m");
-        }
-        s.push_str(&format!("{}{}\t", self.val, "\x1b[1;0m"));
-
-        s.fmt(f)
     }
 }
 
