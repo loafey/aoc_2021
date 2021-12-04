@@ -1,209 +1,194 @@
+use core::fmt;
+
 use crate::load;
 
-#[derive(Debug)]
+const BOARD_SIZE: usize = 5;
+
+#[derive(Debug, Clone)]
 struct Board {
-    pub vals: Vec<Vec<i32>>,
-    pub found: [[bool; 5]; 5],
+    paper: Vec<Vec<Num>>,
+}
+impl Board {
+    fn new(nums: &[i32]) -> Self {
+        let mut paper = Vec::with_capacity(BOARD_SIZE);
+
+        let chunks = nums.chunks(BOARD_SIZE);
+        chunks.for_each(|c| {
+            let mut r = Vec::with_capacity(BOARD_SIZE);
+            c.iter().for_each(|v| r.push(Num::new(*v)));
+            paper.push(r);
+        });
+
+        Self { paper }
+    }
+
+    pub fn add_num(&mut self, n: i32) {
+        self.paper.iter_mut().for_each(|r| {
+            r.iter_mut().for_each(|v| {
+                if v.val == n {
+                    v.found = true;
+                }
+            })
+        });
+    }
+
+    pub fn won(&self, num: i32) -> Option<i32> {
+        let mut won = false;
+        // ROW WIN
+        for y in &self.paper {
+            let mut row_won = true;
+            for x in y {
+                row_won &= x.found;
+            }
+            if row_won {
+                won = true;
+                break;
+            }
+        }
+
+        // COLLUMN WIN
+        for c in 0..self.paper.len() {
+            let mut collumn_won = true;
+            for y in &self.paper {
+                collumn_won &= y[c].found;
+            }
+            if collumn_won {
+                won = true;
+                break;
+            }
+        }
+
+        if won {
+            let sum = self
+                .paper
+                .iter()
+                .flatten()
+                .filter(|n| !n.found)
+                .map(|n| n.val)
+                .sum::<i32>();
+            Some(sum * num)
+        } else {
+            None
+        }
+    }
+}
+impl fmt::Display for Board {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
+        let mut s = String::new();
+        self.paper.iter().for_each(|r| {
+            r.iter().for_each(|v| s.push_str(&format!("{}", v)));
+            s.push('\n')
+        });
+        s.fmt(f)
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+struct Num {
+    val: i32,
+    found: bool,
+}
+impl Num {
+    fn new(val: i32) -> Self {
+        Self { val, found: false }
+    }
+}
+impl fmt::Display for Num {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
+        let mut s = String::new();
+        if self.found {
+            s.push_str("\x1b[1;31m");
+        }
+        s.push_str(&format!("{}{}\t", self.val, "\x1b[1;0m"));
+
+        s.fmt(f)
+    }
 }
 
 pub fn part1() -> i32 {
     let s = load("input/day4.txt");
-    let mut all_input = s.split("\n\n").collect::<Vec<_>>();
-    let numbers = all_input
-        .remove(0)
+    let mut s = s.split("\n\n");
+    let numbers = s
+        .next()
+        .unwrap()
         .split(',')
-        .map(|n| n.parse::<i32>().unwrap());
+        .map(|s| s.parse::<i32>().unwrap());
+    let mut ans = i32::MIN;
 
-    let mut boards = vec![];
-
-    for b in all_input {
-        let vals = b
-            .split('\n')
-            .map(|r| {
-                r.split(' ')
+    let mut boards = s
+        .map(|b_str| {
+            Board::new(
+                &b_str
+                    .split('\n')
+                    .map(|r| r.split(' '))
+                    .flatten()
                     .filter(|s| !s.is_empty())
-                    .map(|w| w.parse::<i32>().unwrap())
-                    .collect()
-            })
-            .collect();
-        let found = [[false; 5]; 5];
-
-        boards.push(Board { vals, found })
-    }
+                    .map(|s| s.parse::<i32>().unwrap())
+                    .collect::<Vec<_>>(),
+            )
+        })
+        .collect::<Vec<_>>();
 
     for n in numbers {
-        for b in boards.iter_mut() {
-            for y in 0..b.vals.len() {
-                for x in 0..b.vals[y].len() {
-                    if b.vals[y][x] == n {
-                        b.found[y][x] = true;
-                    }
-                }
+        let mut found_winner = false;
+        boards.iter_mut().for_each(|b| {
+            b.add_num(n);
+            if let Some(s) = b.won(n) {
+                ans = s;
+                found_winner = true;
             }
-        }
-
-        for b in &mut boards {
-            for r in b.found {
-                let mut winner = true;
-                for x in r {
-                    winner &= x;
-                }
-                if winner {
-                    let mut values_to_remove = vec![];
-                    for y in 0..b.vals.len() {
-                        for x in 0..b.vals[y].len() {
-                            if b.found[y][x] {
-                                values_to_remove.push(b.vals[y][x]);
-                            }
-                        }
-                    }
-                    b.vals.iter_mut().for_each(|r| {
-                        let mut n = r
-                            .iter()
-                            .filter(|v| !values_to_remove.contains(v))
-                            .copied()
-                            .collect();
-                        r.clear();
-                        r.append(&mut n);
-                    });
-                    return b.vals.iter().map(|v| v.iter().sum::<i32>()).sum::<i32>() * n;
-                }
-            }
-
-            for c in 0..b.found[0].len() {
-                let mut winner = true;
-                for y in 0..b.found.len() {
-                    winner &= b.found[y][c];
-                }
-                if winner {
-                    let mut values_to_remove = vec![];
-                    for y in 0..b.vals.len() {
-                        for x in 0..b.vals[y].len() {
-                            if b.found[y][x] {
-                                values_to_remove.push(b.vals[y][x]);
-                            }
-                        }
-                    }
-                    b.vals.iter_mut().for_each(|r| {
-                        let mut n = r
-                            .iter()
-                            .filter(|v| !values_to_remove.contains(v))
-                            .copied()
-                            .collect();
-                        r.clear();
-                        r.append(&mut n);
-                    });
-                    return b.vals.iter().map(|v| v.iter().sum::<i32>()).sum::<i32>() * n;
-                }
-            }
+        });
+        if found_winner {
+            break;
         }
     }
-
-    0
+    ans
 }
 
 pub fn part2() -> i32 {
     let s = load("input/day4.txt");
-    let mut all_input = s.split("\n\n").collect::<Vec<_>>();
-    let numbers = all_input
-        .remove(0)
+    let mut s = s.split("\n\n");
+    let numbers = s
+        .next()
+        .unwrap()
         .split(',')
-        .map(|n| n.parse::<i32>().unwrap());
-    let num_vec = numbers.clone().collect::<Vec<_>>();
+        .map(|s| s.parse::<i32>().unwrap());
+    let mut ans = i32::MIN;
 
-    let mut boards = vec![];
-
-    for b in all_input {
-        let vals = b
-            .split('\n')
-            .map(|r| {
-                r.split(' ')
+    let mut boards = s
+        .map(|b_str| {
+            Board::new(
+                &b_str
+                    .split('\n')
+                    .map(|r| r.split(' '))
+                    .flatten()
                     .filter(|s| !s.is_empty())
-                    .map(|w| w.parse::<i32>().unwrap())
-                    .collect()
+                    .map(|s| s.parse::<i32>().unwrap())
+                    .collect::<Vec<_>>(),
+            )
+        })
+        .collect::<Vec<_>>();
+
+    for n in numbers {
+        let new_boards = boards
+            .clone()
+            .into_iter()
+            .map(|mut b| {
+                b.add_num(n);
+                b
             })
-            .collect();
-        let found = [[false; 5]; 5];
-
-        boards.push(Board { vals, found })
-    }
-
-    for (p, n) in numbers.enumerate() {
-        for b in boards.iter_mut() {
-            for y in 0..b.vals.len() {
-                for x in 0..b.vals[y].len() {
-                    if b.vals[y][x] == n {
-                        b.found[y][x] = true;
-                    }
-                }
+            .filter(|b| b.won(n).is_none())
+            .collect::<Vec<_>>();
+        if !new_boards.is_empty() {
+            boards = new_boards;
+        } else {
+            boards[0].add_num(n);
+            if let Some(v) = boards[0].won(n) {
+                ans = v;
             }
-        }
-
-        let mut winner = false;
-        let mut remove = vec![];
-        let mut i = 0;
-        for b in boards.iter() {
-            for r in b.found {
-                let mut w = true;
-                for x in r {
-                    w &= x;
-                }
-                winner = w;
-                if winner {
-                    break;
-                }
-            }
-
-            if !winner {
-                for c in 0..b.found[0].len() {
-                    let mut w = true;
-                    for y in 0..b.found.len() {
-                        w &= b.found[y][c];
-                    }
-                    winner = w;
-                    if winner {
-                        break;
-                    }
-                }
-            }
-
-            if winner {
-                remove.push(i);
-            }
-
-            i += 1;
-        }
-
-        let mut modd = 0;
-        for r in remove {
-            if boards.len() == 1 || (num_vec.len() - 1 == p) {
-                let b = &mut boards[r];
-
-                println!("{:?}", b.found);
-                let mut values_to_remove = vec![];
-                for y in 0..b.vals.len() {
-                    for x in 0..b.vals[y].len() {
-                        if b.found[y][x] {
-                            values_to_remove.push(b.vals[y][x]);
-                        }
-                    }
-                }
-                b.vals.iter_mut().for_each(|r| {
-                    let mut n = r
-                        .iter()
-                        .filter(|v| !values_to_remove.contains(v))
-                        .copied()
-                        .collect();
-                    r.clear();
-                    r.append(&mut n);
-                });
-                return b.vals.iter().map(|v| v.iter().sum::<i32>()).sum::<i32>() * n;
-            } else {
-                boards.remove(r - modd);
-                modd += 1;
-            }
+            break;
         }
     }
 
-    0
+    ans
 }
