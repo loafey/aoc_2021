@@ -144,17 +144,5 @@ pub fn part2() -> usize {
             }
         });
 
-    /*matrix.iter().for_each(|f| {
-        f.iter().for_each(|v| {
-            if *v == 0 {
-                print!(".")
-            } else {
-                print!("{}", v)
-            }
-        });
-        println!()
-    });*/
-
     matrix.iter().flatten().filter(|v| **v > 1).count()
-    // 21466
 }
