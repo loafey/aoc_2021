@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 interior_mutability_pointer = "0.1.2"
+aoc_lib = { git = "https://github.com/samhamnam/aoc_lib" }

@@ -1,5 +1,5 @@
-use lib::benchmark_function as bf;
-pub use lib::*;
+use aoc_lib::benchmark_function as bf;
+pub use aoc_lib::*;
 
 mod day1;
 mod day10;
@@ -26,8 +26,6 @@ mod day6;
 mod day7;
 mod day8;
 mod day9;
-
-mod lib;
 
 fn main() {
     let benchmarks = [

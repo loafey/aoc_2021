@@ -6,8 +6,14 @@ version = 3
 name = "aoc_2021"
 version = "0.1.0"
 dependencies = [
+ "aoc_lib",
  "interior_mutability_pointer",
 ]
+
+[[package]]
+name = "aoc_lib"
+version = "0.1.0"
+source = "git+https://github.com/samhamnam/aoc_lib#813879f5778418d57619439ec1cc315dcb0ea259"
 
 [[package]]
 name = "interior_mutability_pointer"
