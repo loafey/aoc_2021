@@ -1,4 +1,4 @@
-use std::ops::Range;
+use std::{cmp::Ordering, path::Path};
 
 use crate::load_to_rows_and_pattern;
 
@@ -17,132 +17,69 @@ impl Pos {
         let y = s.next().unwrap().parse::<i32>().unwrap();
         Self::new(x, y)
     }
-    pub fn is_hoz_ver(&self, other: &Self) -> bool {
+    fn is_hoz_ver(&self, other: &Self) -> bool {
         self.x == other.x || self.y == other.y
     }
-    pub fn is_45(&self, other: &Self) -> bool {
-        ((other.x - self.x).abs() == (other.y - self.y).abs())
+    fn is_45(&self, other: &Self) -> bool {
+        (other.x - self.x).abs() == (other.y - self.y).abs()
     }
     pub fn is_valid(&self, other: &Self) -> bool {
         self.is_hoz_ver(other) || self.is_45(other)
     }
-
-    pub fn create_range(&self, other: &Self) -> (Range<i32>, Range<i32>) {
-        (self.x..other.x + 1, self.y..other.y + 1)
-    }
-
-    pub fn cas_hoz(&mut self, other: &mut Self) {
-        if self.x > other.x {
-            std::mem::swap(&mut self.x, &mut other.x);
-        } else if self.y > other.y {
-            std::mem::swap(&mut self.y, &mut other.y);
-        }
-    }
 }
 
-pub fn part1() -> usize {
-    let s = load_to_rows_and_pattern("input/day5.txt", |c| c == ' ');
-    let s = s
-        .map(|r| {
-            let mut r = r.filter(|s| s != "->");
-            let mut p1 = Pos::from_str(&r.next().unwrap());
-            let mut p2 = Pos::from_str(&r.next().unwrap());
-            p1.cas_hoz(&mut p2);
-            (p1, p2)
-        })
-        .filter(|(p1, p2)| p1.is_hoz_ver(p2))
-        //.map(|(p1, p2)| p1.to_range(&p2))
-        .collect::<Vec<_>>();
-
-    let mut largest_x = 0;
-    let mut largest_y = 0;
-
-    s.iter().for_each(|(p1, p2)| {
-        if p1.x > largest_x {
-            largest_x = p1.x
-        }
-        if p1.y > largest_y {
-            largest_y = p1.y
-        }
-        if p2.x > largest_x {
-            largest_x = p2.x
-        }
-        if p2.y > largest_y {
-            largest_y = p2.y
-        }
-    });
-
-    let mut matrix = vec![vec![0; largest_x as usize + 1]; largest_y as usize + 1];
-
-    s.iter().for_each(|(p1, p2)| {
-        for y in p1.y..p2.y + 1 {
-            for x in p1.x..p2.x + 1 {
-                matrix[y as usize][x as usize] += 1;
-            }
-        }
-    });
-
-    matrix.iter().flatten().filter(|v| **v > 1).count()
-}
-
-pub fn part2() -> usize {
-    let s = load_to_rows_and_pattern("input/day5.txt", |c| c == ' ');
-    let s = s
+fn solver<A>(path: A, filter: fn(&(Pos, Pos)) -> bool) -> usize
+where
+    A: AsRef<Path> + std::fmt::Debug + Copy,
+{
+    let s = load_to_rows_and_pattern(path, |c| c == ' ')
         .map(|r| {
             let mut r = r.filter(|s| s != "->");
             let p1 = Pos::from_str(&r.next().unwrap());
             let p2 = Pos::from_str(&r.next().unwrap());
             (p1, p2)
         })
+        .filter(filter)
         .collect::<Vec<_>>();
 
-    let mut largest_x = 0;
-    let mut largest_y = 0;
+    let largest = |map: fn(&(Pos, Pos)) -> [i32; 2]| {
+        s.iter()
+            .map(map)
+            .flatten()
+            .reduce(|a, v| if a >= v { a } else { v })
+            .unwrap_or_default()
+    };
+    let delta = |p1: i32, p2: i32| match p1.cmp(&p2) {
+        Ordering::Less => 1,
+        Ordering::Equal => 0,
+        Ordering::Greater => -1,
+    };
 
-    s.iter().for_each(|(p1, p2)| {
-        if p1.x > largest_x {
-            largest_x = p1.x
-        }
-        if p1.y > largest_y {
-            largest_y = p1.y
-        }
-        if p2.x > largest_x {
-            largest_x = p2.x
-        }
-        if p2.y > largest_y {
-            largest_y = p2.y
-        }
-    });
+    let largest_x = largest(|(p1, p2)| [p1.x, p2.x]);
+    let largest_y = largest(|(p1, p2)| [p1.y, p2.y]);
+
     let mut matrix = vec![vec![0; largest_x as usize + 1]; largest_y as usize + 1];
 
-    s.iter()
-        .filter(|(p1, p2)| p1.is_45(p2) || p1.is_hoz_ver(p2))
-        .for_each(|ps| {
-            let (p1, p2) = ps;
+    s.iter().for_each(|(p1, p2)| {
+        let x_mod = delta(p1.x, p2.x);
+        let y_mod = delta(p1.y, p2.y);
 
-            let x_mod = if p1.x == p2.x {
-                0
-            } else if p1.x < p2.x {
-                1
-            } else {
-                -1
-            };
-            let y_mod = if p1.y == p2.y {
-                0
-            } else if p1.y < p2.y {
-                1
-            } else {
-                -1
-            };
-
-            let mut x = p1.x;
-            let mut y = p1.y;
-            while x != p2.x + x_mod || y != p2.y + y_mod {
-                matrix[y as usize][x as usize] += 1;
-                x += x_mod;
-                y += y_mod;
-            }
-        });
+        let mut x = p1.x;
+        let mut y = p1.y;
+        while x != p2.x + x_mod || y != p2.y + y_mod {
+            matrix[y as usize][x as usize] += 1;
+            x += x_mod;
+            y += y_mod;
+        }
+    });
 
     matrix.iter().flatten().filter(|v| **v > 1).count()
+}
+
+pub fn part1() -> usize {
+    solver("input/day5.txt", |(p1, p2)| p1.is_hoz_ver(p2))
+}
+
+pub fn part2() -> usize {
+    solver("input/day5.txt", |(p1, p2)| p1.is_valid(p2))
 }
