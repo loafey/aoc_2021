@@ -9,7 +9,7 @@ pub fn part1() -> i32 {
     let median = v[v.len() / 2];
 
     let mut consume = 0;
-    v.iter().for_each(|i| consume += (*i - median).abs());
+    v.into_iter().for_each(|i| consume += (i - median).abs());
     consume
 }
 
