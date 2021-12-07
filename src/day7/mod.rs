@@ -20,8 +20,8 @@ pub fn part2() -> i32 {
 
     let avg = v.iter().sum::<i32>() / v.len() as i32;
     let mut consume = 0;
-    v.iter().for_each(|v| {
-        let p = (*v - avg).abs();
+    v.into_iter().for_each(|v| {
+        let p = (v - avg).abs();
         for p in 0..p + 1 {
             consume += p;
         }
