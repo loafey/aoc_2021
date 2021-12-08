@@ -1,49 +1,10 @@
 use aoc_lib::load_to_rows_and_pattern;
 
-/*
-      0
-    ddddd
- 1 e     a 2
-   e  3  a
-    fffff
- 4 g     b 5
-   g     b
-    ccccc
-      6
-*/
-#[rustfmt::skip]
-fn parse_7_digit_num(s: &str, pat: [char;7]) -> char {
-    let mut num = [false; 7];
-    if s.contains(pat[0]) { num[0] = true; }
-    if s.contains(pat[1]) { num[1] = true; }
-    if s.contains(pat[2]) { num[2] = true; }
-    if s.contains(pat[3]) { num[3] = true; }
-    if s.contains(pat[4]) { num[4] = true; }
-    if s.contains(pat[5]) { num[5] = true; }
-    if s.contains(pat[6]) { num[6] = true; }
-
-    match num {
-        [true,  true,   true, false,  true,  true,  true] => '0',
-        [false, false,  true, false, false,  true, false] => '1',
-        [true,  false,  true,  true,  true, false,  true] => '2',
-        [true,  false,  true,  true, false,  true,  true] => '3',
-        [false,  true,  true,  true, false,  true, false] => '4',
-        [true,   true, false,  true, false,  true,  true] => '5',
-        [true,   true, false,  true,  true,  true,  true] => '6',
-        [true,  false,  true, false, false,  true, false] => '7',
-        [true,   true,  true,  true,  true,  true,  true] => '8',
-        [true,   true,  true,  true, false,  true,  true] => '9',
-        _ => '-'
-    }
-}
-
 pub fn part1() -> i32 {
     let mut unique = 0;
     load_to_rows_and_pattern("input/day8.txt", |c| c == '|').for_each(|mut r| {
-        r.next();
-        let output = r.next().unwrap();
-
-        output
+        r.nth(1)
+            .unwrap()
             .split(' ')
             .filter(|s| !s.is_empty())
             .for_each(|s| match s.len() {
@@ -55,79 +16,88 @@ pub fn part1() -> i32 {
     unique
 }
 
+#[rustfmt::skip]
+fn parse_7_digit_num(s: &str, pat: [char;7]) -> char {
+    let mut num = [false; 7];
+    if s.contains(pat[0]) { num[0] = true; }
+    if s.contains(pat[1]) { num[1] = true; }
+    if s.contains(pat[2]) { num[2] = true; }
+    if s.contains(pat[3]) { num[3] = true; }
+    if s.contains(pat[4]) { num[4] = true; }
+    if s.contains(pat[5]) { num[5] = true; }
+    if s.contains(pat[6]) { num[6] = true; }
+
+    const HO: bool = true;
+    const OH: bool = false;
+    // Santa is very jolly this year 🎅
+    match num {
+        [HO,HO,HO,OH,HO,HO,HO] => '0',
+        [OH,OH,HO,OH,OH,HO,OH] => '1',
+        [HO,OH,HO,HO,HO,OH,HO] => '2',
+        [HO,OH,HO,HO,OH,HO,HO] => '3',
+        [OH,HO,HO,HO,OH,HO,OH] => '4',
+        [HO,HO,OH,HO,OH,HO,HO] => '5',
+        [HO,HO,OH,HO,HO,HO,HO] => '6',
+        [HO,OH,HO,OH,OH,HO,OH] => '7',
+        [HO,HO,HO,HO,HO,HO,HO] => '8',
+        [HO,HO,HO,HO,OH,HO,HO] => '9',
+        _ => '-'
+    }
+}
+
+pub fn char_finder<P>(subject: &str, f: P) -> char
+where
+    P: FnMut(&char) -> bool,
+{
+    subject.chars().find(f).unwrap()
+}
+
+pub fn word_finder<'l, P>(input: &'l str, pat: &[&str], f: P, size: usize) -> &'l str
+where
+    P: FnMut(&char) -> bool + Copy,
+{
+    input
+        .split(' ')
+        .filter(|s| !s.is_empty())
+        .filter(|s| !pat.contains(s))
+        .find(|s| s.chars().filter(f).count() == size)
+        .unwrap()
+}
+
 pub fn part2() -> i32 {
     load_to_rows_and_pattern("input/day8.txt", |c| c == '|')
         .map(|mut r| {
-            let input = r.next().unwrap();
+            let i = r.next().unwrap();
             let output = r.next().unwrap();
 
-            let mut pat = [""; 10];
-            let splat = input.split(' ').filter(|s| !s.is_empty());
+            let mut p = [""; 10];
+            let splat = i.split(' ').filter(|s| !s.is_empty());
             splat.clone().for_each(|f| {
                 match f.len() {
-                    2 => pat[1] = f, // 1
-                    4 => pat[4] = f, // 4
-                    3 => pat[7] = f, // 7
-                    7 => pat[8] = f, // 8
+                    2 => p[1] = f, // 1
+                    4 => p[4] = f, // 4
+                    3 => p[7] = f, // 7
+                    7 => p[8] = f, // 8
                     _ => {}
                 }
             });
 
-            let a = pat[7].chars().find(|c| !pat[1].contains(*c)).unwrap();
-            {
-                let p = pat;
-                splat.clone().filter(|s| !p.contains(s)).for_each(|s| {
-                    if s.chars().filter(|ch| pat[4].contains(*ch)).count() == 4 {
-                        pat[9] = s;
-                    }
-                });
-            }
-            let g = pat[9]
-                .chars()
-                .find(|ch| !pat[4].contains(*ch) && *ch != a)
-                .unwrap();
-            let e = pat[8]
-                .chars()
-                .find(|ch| !pat[4].contains(*ch) && *ch != a && *ch != g)
-                .unwrap();
-            {
-                let p = pat;
-                splat.clone().filter(|s| !p.contains(s)).for_each(|s| {
-                    if s.chars()
-                        .filter(|ch| *ch != a && *ch != g && *ch != e)
-                        .count()
-                        == 2
-                    {
-                        pat[2] = s;
-                    }
-                });
-            }
-            {
-                let p = pat;
-                splat.clone().filter(|s| !p.contains(s)).for_each(|s| {
-                    if s.chars().filter(|ch| !pat[2].contains(*ch)).count() == 1 {
-                        pat[3] = s;
-                    }
-                });
-            }
-            let c = pat[1].chars().find(|ch| pat[2].contains(*ch)).unwrap();
-            let f = pat[1].chars().find(|ch| !pat[2].contains(*ch)).unwrap();
-            let d = pat[3]
-                .chars()
-                .find(|ch| ![a, c, e, f, g].contains(ch))
-                .unwrap();
-            let b = pat[8]
-                .chars()
-                .find(|ch| ![a, c, e, f, g, d].contains(ch))
-                .unwrap();
-
-            let input = [a, b, c, d, e, f, g];
+            let a = char_finder(p[7], |ch| !p[1].contains(*ch));
+            p[9] = word_finder(&i, &p, |ch| p[4].contains(*ch), 4);
+            let g = char_finder(p[9], |ch| !p[4].contains(*ch) && *ch != a);
+            let e = char_finder(p[8], |ch| !p[4].contains(*ch) && ![a, g].contains(ch));
+            p[2] = word_finder(&i, &p, |ch| *ch != a && *ch != g && *ch != e, 2);
+            p[3] = word_finder(&i, &p, |ch| !p[2].contains(*ch), 1);
+            let c = char_finder(p[1], |ch| p[2].contains(*ch));
+            let f = char_finder(p[1], |ch| !p[2].contains(*ch));
+            let d = char_finder(p[3], |ch| ![a, c, e, f, g].contains(ch));
+            let b = char_finder(p[4], |ch| ![a, c, e, f, g, d].contains(ch));
 
             let mut output_num = String::new();
             output
                 .split(' ')
                 .filter(|s| !s.is_empty())
-                .for_each(|s| output_num.push(parse_7_digit_num(s, input)));
+                .for_each(|s| output_num.push(parse_7_digit_num(s, [a, b, c, d, e, f, g])));
 
             output_num.parse::<i32>().unwrap()
         })
