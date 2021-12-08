@@ -1,0 +1,57 @@
+ aaaa
+b    c
+b    c
+ dddd
+e    f
+e    f
+ gggg
+
+ 0000
+1    2
+1    2
+ 3333
+4    5
+4    5
+ 6666
+
+
+ 9 :  
+(8): A B C D E F G
+(7):     C     F G 
+ 6 :  
+ 5 : 
+(4): A       E F G
+ 3 :  
+ 2 :  
+(1):           F G
+ 0 : 
+
+a = 7 loj 1
+b = 
+c = 1 loj 6
+d = 
+e = 
+f = 
+g = 
+
+
+ dddd
+e    a
+e    a
+ ffff
+g    b
+g    b
+ cccc
+
+ cccc
+f    e
+f    e
+ bbbb
+a    d
+a    d
+ gggg
+
+0> 2
+3> 1
+5> 2
+6> 2
