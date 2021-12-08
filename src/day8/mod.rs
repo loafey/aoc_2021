@@ -68,11 +68,10 @@ pub fn part2() -> i32 {
     load_to_rows_and_pattern("input/day8.txt", |c| c == '|')
         .map(|mut r| {
             let i = r.next().unwrap();
-            let output = r.next().unwrap();
+            let o = r.next().unwrap();
 
             let mut p = [""; 10];
-            let splat = i.split(' ').filter(|s| !s.is_empty());
-            splat.clone().for_each(|f| {
+            i.split(' ').filter(|s| !s.is_empty()).for_each(|f| {
                 match f.len() {
                     2 => p[1] = f, // 1
                     4 => p[4] = f, // 4
@@ -86,7 +85,7 @@ pub fn part2() -> i32 {
             p[9] = word_finder(&i, &p, |ch| p[4].contains(*ch), 4);
             let g = char_finder(p[9], |ch| !p[4].contains(*ch) && *ch != a);
             let e = char_finder(p[8], |ch| !p[4].contains(*ch) && ![a, g].contains(ch));
-            p[2] = word_finder(&i, &p, |ch| *ch != a && *ch != g && *ch != e, 2);
+            p[2] = word_finder(&i, &p, |ch| ![a, g, e].contains(ch), 2);
             p[3] = word_finder(&i, &p, |ch| !p[2].contains(*ch), 1);
             let c = char_finder(p[1], |ch| p[2].contains(*ch));
             let f = char_finder(p[1], |ch| !p[2].contains(*ch));
@@ -94,8 +93,7 @@ pub fn part2() -> i32 {
             let b = char_finder(p[4], |ch| ![a, c, e, f, g, d].contains(ch));
 
             let mut output_num = String::new();
-            output
-                .split(' ')
+            o.split(' ')
                 .filter(|s| !s.is_empty())
                 .for_each(|s| output_num.push(parse_7_digit_num(s, [a, b, c, d, e, f, g])));
 
