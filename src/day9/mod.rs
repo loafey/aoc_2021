@@ -33,16 +33,16 @@ fn get_middles(m: &[Vec<i32>]) -> Vec<(usize, usize)> {
                     .map(|(v, _, _)| v)
                     .collect::<Vec<_>>();
                 n.push(m[y][x]);
-                let mut c = n.clone();
-                c.sort_unstable();
-                c.dedup();
+                n.sort_unstable();
+                n.dedup();
 
+                let n_len = n.len();
                 let min = n
                     .into_iter()
                     .reduce(|accum, item| if accum < item { accum } else { item })
                     .unwrap();
 
-                if min == *v && c.len() != 1 {
+                if min == *v && n_len != 1 {
                     Some((x, y))
                 } else {
                     None
@@ -80,44 +80,39 @@ pub fn part2() -> usize {
         .map(|(x, y)| (0, *x, *y))
         .collect::<Vec<_>>();
 
-    let mut flow = vec![];
-    middles.iter_mut().for_each(|t| {
-        let (_, x, y) = t;
-        t.0 += 1;
-        let mut buffers = vec![];
-        let mut done = vec![(*x, *y)];
-        flow.push((*x, *y));
+    let mut middles = middles
+        .iter_mut()
+        .map(|t| {
+            let (_, x, y) = t;
+            t.0 += 1;
+            let mut buffers = vec![];
+            let mut done = vec![(*x, *y)];
 
-        buffers.append(
-            &mut get_neigbours(&m, *x, *y)
-                .into_iter()
-                .filter(|(v, _, _)| *v != 9)
-                .collect(),
-        );
+            buffers.append(
+                &mut get_neigbours(&m, *x, *y)
+                    .into_iter()
+                    .filter(|(v, _, _)| *v != 9)
+                    .collect(),
+            );
 
-        while !buffers.is_empty() {
-            let (_, x, y) = buffers[0];
-            if !done.contains(&(x, y)) {
-                t.0 += 1;
-                buffers.append(
-                    &mut get_neigbours(&m, x, y)
-                        .into_iter()
-                        .filter(|(v, _, _)| *v != 9)
-                        .collect(),
-                );
-                done.push((x, y));
-                flow.push((x, y));
+            while !buffers.is_empty() {
+                let (_, x, y) = buffers[0];
+                if !done.contains(&(x, y)) {
+                    t.0 += 1;
+                    buffers.append(
+                        &mut get_neigbours(&m, x, y)
+                            .into_iter()
+                            .filter(|(v, _, _)| *v != 9)
+                            .collect(),
+                    );
+                    done.push((x, y));
+                }
+                buffers.remove(0);
             }
-            buffers.remove(0);
-        }
-    });
-
-    let mut middles = middles.into_iter().map(|(v, _, _)| v).collect::<Vec<_>>();
+            t.0
+        })
+        .collect::<Vec<_>>();
     middles.sort_unstable();
 
-    let a = middles[middles.len() - 1];
-    let b = middles[middles.len() - 2];
-    let c = middles[middles.len() - 3];
-    println!("{:?}", middles);
-    a * b * c
+    middles[middles.len() - 1] * middles[middles.len() - 2] * middles[middles.len() - 3]
 }
