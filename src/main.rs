@@ -1,3 +1,4 @@
+#![feature(slice_group_by)]
 use aoc_lib::benchmark_function as bf;
 pub use aoc_lib::*;
 
