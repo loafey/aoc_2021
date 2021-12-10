@@ -3,7 +3,7 @@ use std::vec::IntoIter;
 use aoc_lib::load_to_matrix;
 use interior_mutability_pointer::Imp;
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 struct Chunk {
     char: char,
     children: Vec<Imp<Chunk>>,
@@ -13,6 +13,23 @@ struct Chunk {
 impl std::fmt::Display for Chunk {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
         write!(f, "{}", self.to_string_helper(true))
+    }
+}
+
+impl std::fmt::Debug for Chunk {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
+        write!(f, "{}", self.debug_string(0))
+    }
+}
+impl Chunk {
+    pub fn debug_string(&self, tabber: usize) -> String {
+        let mut s = String::new();
+        s.push_str(&format!("{:?}\n", self.char));
+        self.children.iter().for_each(|c| {
+            s.push_str(&"\t".repeat(tabber));
+            s.push_str(&c.debug_string(tabber + 1));
+        });
+        s
     }
 }
 
@@ -117,7 +134,7 @@ pub fn part1() -> i32 {
     let mut curly = 0;
     let mut arrow = 0;
 
-    load_to_matrix("input/day10.txt").for_each(|mut r| {
+    load_to_matrix("input/day10example2.txt").for_each(|mut r| {
         let parent_chunk = Chunk::parse_line(&mut r);
 
         if parent_chunk.corrupt() {
