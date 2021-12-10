@@ -16,23 +16,6 @@ impl std::fmt::Display for Chunk {
     }
 }
 
-impl std::fmt::Debug for Chunk {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
-        write!(f, "{}", self.debug_string(0))
-    }
-}
-impl Chunk {
-    pub fn debug_string(&self, tabber: usize) -> String {
-        let mut s = String::new();
-        s.push_str(&format!("{:?}\n", self.char));
-        self.children.iter().for_each(|c| {
-            s.push_str(&" ".repeat(tabber));
-            s.push_str(&c.debug_string(tabber + 1));
-        });
-        s
-    }
-}
-
 impl Chunk {
     pub fn new(char: char) -> Self {
         Self {
