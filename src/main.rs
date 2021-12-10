@@ -2,7 +2,15 @@
 use aoc_lib::benchmark_function as bf;
 pub use aoc_lib::*;
 
-mod day1;
+mod day01;
+mod day02;
+mod day03;
+mod day04;
+mod day05;
+mod day06;
+mod day07;
+mod day08;
+mod day09;
 mod day10;
 mod day11;
 mod day12;
@@ -13,32 +21,24 @@ mod day16;
 mod day17;
 mod day18;
 mod day19;
-mod day2;
 mod day20;
 mod day21;
 mod day22;
 mod day23;
 mod day24;
 mod day25;
-mod day3;
-mod day4;
-mod day5;
-mod day6;
-mod day7;
-mod day8;
-mod day9;
 
 fn main() {
     let benchmarks = [
-        bf(1, day1::part1, day1::part2),
-        bf(2, day2::part1, day2::part2),
-        bf(3, day3::part1, day3::part2),
-        bf(4, day4::part1, day4::part2),
-        bf(5, day5::part1, day5::part2),
-        bf(6, day6::part1, day6::part2),
-        bf(7, day7::part1, day7::part2),
-        bf(8, day8::part1, day8::part2),
-        bf(9, day9::part1, day9::part2),
+        bf(1, day01::part1, day01::part2),
+        bf(2, day02::part1, day02::part2),
+        bf(3, day03::part1, day03::part2),
+        bf(4, day04::part1, day04::part2),
+        bf(5, day05::part1, day05::part2),
+        bf(6, day06::part1, day06::part2),
+        bf(7, day07::part1, day07::part2),
+        bf(8, day08::part1, day08::part2),
+        bf(9, day09::part1, day09::part2),
         bf(10, day10::part1, day10::part2),
         bf(11, day11::part1, day11::part2),
         bf(12, day12::part1, day12::part2),
