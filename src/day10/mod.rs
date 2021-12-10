@@ -26,7 +26,7 @@ impl Chunk {
         let mut s = String::new();
         s.push_str(&format!("{:?}\n", self.char));
         self.children.iter().for_each(|c| {
-            s.push_str(&"\t".repeat(tabber));
+            s.push_str(&" ".repeat(tabber));
             s.push_str(&c.debug_string(tabber + 1));
         });
         s
