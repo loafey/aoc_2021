@@ -1,25 +1,28 @@
+use std::vec::IntoIter;
+
 use aoc_lib::load_to_matrix;
 
-fn get_neighbours(x: usize, y: usize, max_x: usize, max_y: usize) -> Vec<(usize, usize)> {
-    let mut v = vec![];
+fn get_neighbours(x: usize, y: usize, max_x: usize, max_y: usize) -> IntoIter<(usize, usize)> {
     let x = x as i32;
     let y = y as i32;
     let max_x = max_x as i32;
     let max_y = max_y as i32;
 
-    v.push((x + 1, y));
-    v.push((x + 1, y + 1));
-    v.push((x, y + 1));
-    v.push((x - 1, y + 1));
-    v.push((x - 1, y));
-    v.push((x - 1, y - 1));
-    v.push((x, y - 1));
-    v.push((x + 1, y - 1));
-
-    v.into_iter()
-        .filter(|(x, y)| !(*x < 0 || *y < 0 || *x >= max_x || *y >= max_y))
-        .map(|(x, y)| (x as usize, y as usize))
-        .collect()
+    [
+        (x + 1, y - 1),
+        (x, y - 1),
+        (x - 1, y - 1),
+        (x - 1, y),
+        (x - 1, y + 1),
+        (x, y + 1),
+        (x + 1, y + 1),
+        (x + 1, y),
+    ]
+    .into_iter()
+    .filter(|(x, y)| !(*x < 0 || *y < 0 || *x >= max_x || *y >= max_y))
+    .map(|(x, y)| (x as usize, y as usize))
+    .collect::<Vec<_>>()
+    .into_iter()
 }
 
 fn squider(matrix: &mut [Vec<i32>]) -> i32 {
@@ -32,7 +35,6 @@ fn squider(matrix: &mut [Vec<i32>]) -> i32 {
     });
 
     let mut buffer = vec![];
-    #[allow(clippy::needless_range_loop)]
     for y in 0..matrix.len() {
         for x in 0..matrix[y].len() {
             if matrix[y][x] > 9 {
@@ -41,7 +43,6 @@ fn squider(matrix: &mut [Vec<i32>]) -> i32 {
 
                 buffer.append(
                     &mut get_neighbours(x, y, matrix[0].len(), matrix.len())
-                        .into_iter()
                         .filter(|(x, y)| matrix[*y][*x] != 0)
                         .collect(),
                 );
@@ -59,7 +60,6 @@ fn squider(matrix: &mut [Vec<i32>]) -> i32 {
             flashes += 1;
             buffer.append(
                 &mut get_neighbours(x, y, matrix[0].len(), matrix.len())
-                    .into_iter()
                     .filter(|(x, y)| matrix[*y][*x] != 0)
                     .collect(),
             );
@@ -73,9 +73,7 @@ fn squider(matrix: &mut [Vec<i32>]) -> i32 {
 fn same(matrix: &[Vec<i32>]) -> bool {
     let fst = matrix[0][0];
     let mut same = true;
-    matrix
-        .iter()
-        .for_each(|r| r.iter().for_each(|v| same &= fst == *v));
+    matrix.iter().flatten().for_each(|v| same &= fst == *v);
     same
 }
 
@@ -88,7 +86,7 @@ pub fn part1() -> i32 {
         .collect::<Vec<_>>();
 
     let mut flashes = 0;
-    for i in 0..100 {
+    for _ in 0..100 {
         flashes += squider(&mut m);
     }
 
