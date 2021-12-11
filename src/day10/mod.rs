@@ -117,7 +117,7 @@ pub fn part1() -> i32 {
     let mut curly = 0;
     let mut arrow = 0;
 
-    load_to_matrix("input/day10example2.txt").for_each(|mut r| {
+    load_to_matrix("input/day10.txt").for_each(|mut r| {
         let parent_chunk = Chunk::parse_line(&mut r);
 
         if parent_chunk.corrupt() {
