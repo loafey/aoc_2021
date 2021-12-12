@@ -1,34 +1,83 @@
---- Mine
-start,A,c,A,b,A,end
+start,A,c,A,c,A,b,A,end
+start,A,c,A,c,A,b,d
+start,A,c,A,c,A,b,end
+start,A,c,A,c,A,end
+start,A,c,A,b,A,c,A,end
+start,A,c,A,b,A,c,end
+start,A,c,A,b,d
 start,A,c,A,b,end
 start,A,c,A,end
-start,A,b,A,end
-start,A,b,end
-start,A,end
-start,b,A,c,A,end
-start,b,A,end
-start,b,end
-
---- Filled
-(start,A,b,A,c,A,end)
-start,A,c,A,end
-start,A,b,A,end
-start,A,b,end
 start,A,c,A,b,A,end
+start,A,c,A,b,d
 start,A,c,A,b,end
-start,A,end
-start,b,A,c,A,end
-start,b,A,end
-start,b,end
-
---- Correct
+start,A,c,A,end
+start,A,b,A,c,A,b,A,end
+start,A,b,A,c,A,b,d
+start,A,b,A,c,A,b,end
 start,A,b,A,c,A,end
-start,A,b,A,end
-start,A,b,end
-start,A,c,A,b,A,end
-start,A,c,A,b,end
-start,A,c,A,end
-start,A,end
-start,b,A,c,A,end
-start,b,A,end
-start,b,end
+start,A,b,A,b,A,c,A,end
+start,A,b,A,b,A,end
+start
+│ A
+│ │ b
+│ │ │ A
+│ │ │ │ b
+│ │ │ │ │ A
+│ │ │ │ │ │ end
+│ │ │ │ │ d
+│ │ │ │ │ end
+│ │ │ │ end
+│ │ │ d
+│ │ │ │ b
+│ │ │ │ │ A
+│ │ │ │ │ │ c
+│ │ │ │ │ │ │ A
+│ │ │ │ │ │ │ │ end
+│ │ │ │ │ │ end
+│ │ │ │ │ end
+│ │ │ end
+│ │ b
+│ │ │ A
+│ │ │ │ c
+│ │ │ │ │ A
+│ │ │ │ │ │ end
+│ │ │ │ end
+│ │ │ d
+│ │ │ end
+│ │ end
+│ b
+│ │ A
+│ │ │ c
+│ │ │ │ A
+│ │ │ │ │ b
+│ │ │ │ │ │ A
+│ │ │ │ │ │ │ end
+│ │ │ │ │ │ d
+│ │ │ │ │ │ end
+│ │ │ │ │ end
+│ │ │ b
+│ │ │ │ A
+│ │ │ │ │ c
+│ │ │ │ │ │ A
+│ │ │ │ │ │ │ end
+│ │ │ │ │ end
+│ │ │ │ d
+│ │ │ │ end
+│ │ │ end
+│ │ d
+│ │ │ b
+│ │ │ │ A
+│ │ │ │ │ c
+│ │ │ │ │ │ A
+│ │ │ │ │ │ │ end
+│ │ │ │ │ end
+│ │ │ │ end
+│ │ end
+│ b
+│ │ A
+│ │ │ c
+│ │ │ │ A
+│ │ │ │ │ end
+│ │ │ end
+│ │ d
+│ │ end
