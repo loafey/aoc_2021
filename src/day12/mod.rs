@@ -3,6 +3,45 @@ use std::collections::HashMap;
 use aoc_lib::load_to_rows_and_pattern;
 use interior_mutability_pointer::Imp;
 
+#[derive(Debug)]
+enum Path {
+    Leaf(String),
+    Node(String, Vec<Path>),
+}
+impl Path {
+    pub fn name(&self) -> &String {
+        match self {
+            Path::Leaf(s) => s,
+            Path::Node(s, _) => s,
+        }
+    }
+
+    pub fn ends(&self) -> usize {
+        match self {
+            Path::Leaf(s) => (s == "end") as usize,
+            Path::Node(_, v) => v.iter().map(|p| p.ends()).sum(),
+        }
+    }
+}
+impl std::fmt::Display for Path {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.helper(1))
+    }
+}
+impl Path {
+    fn helper(&self, tab: usize) -> String {
+        let mut t = String::new();
+        match &self {
+            Path::Leaf(s) => s.clone(),
+            Path::Node(s, ps) => {
+                ps.iter()
+                    .for_each(|p| t = format!("{}\n{}{}", t, "│ ".repeat(tab), p.helper(tab + 1)));
+                format!("{}{}", s, t)
+            }
+        }
+    }
+}
+
 #[derive(PartialEq, Debug, Clone)]
 struct Cave {
     pub big: bool,
@@ -14,7 +53,7 @@ impl Cave {
     }
 }
 
-pub fn part1() -> String {
+pub fn part1() -> usize {
     let s = "input/day12example.txt";
     let mut caves = HashMap::new();
     caves.insert("start".to_string(), Cave::new(true));
@@ -40,31 +79,49 @@ pub fn part1() -> String {
         .for_each(|(a, b)| {
             let mut a_ref = caves.get(&a).unwrap().clone();
             let mut b_ref = caves.get(&b).unwrap().clone();
-            a_ref.roads.push(b);
-            b_ref.roads.push(a);
+            if b != "start" && a != "end" {
+                a_ref.roads.push(b.clone());
+            }
+            if a != "start" && b != "end" {
+                b_ref.roads.push(a);
+            }
         });
 
-    let mut buffer = vec!["start".to_string()];
-    let mut path = vec![];
+    caves.iter().for_each(|(k, c)| {
+        println!("{:<6}|\t{:?}", k, c.roads);
+    });
 
-    while !buffer.is_empty() {
-        let c = buffer[0].clone();
+    let start = evolve(Path::Leaf("start".to_string()), vec![], &caves);
 
-        if c != "end" {
-            caves.get(&c).unwrap().roads.iter().for_each(|c| {
-                buffer.push(c.clone());
-            });
-        } else {
-            println!("{:?}", buffer);
-            break;
-        }
-
-        buffer.remove(0);
-    }
-
-    String::new()
+    start.ends()
 }
 
 pub fn part2() -> String {
     String::new()
+}
+
+fn evolve(p: Path, explored: Vec<String>, caves: &HashMap<String, Imp<Cave>>) -> Path {
+    let n = p.name();
+    let r = &caves.get(n).unwrap().roads;
+    if r.is_empty() {
+        p
+    } else {
+        Path::Node(
+            n.clone(),
+            r.iter()
+                .filter_map(|s| {
+                    if !explored.contains(s) {
+                        let c = caves.get(s).unwrap();
+                        let mut n = explored.clone();
+                        if !c.big {
+                            n.push(s.clone());
+                        }
+                        Some(evolve(Path::Leaf(s.clone()), n, caves))
+                    } else {
+                        None
+                    }
+                })
+                .collect(),
+        )
+    }
 }
