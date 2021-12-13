@@ -126,7 +126,6 @@ pub fn part2() -> usize {
         });
 
     let start = evolve(Path::Leaf("start".to_string()), vec![], &caves, true);
-    println!("{}", start);
 
     start.ends()
 }
