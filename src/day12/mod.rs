@@ -53,7 +53,7 @@ impl Cave {
 }
 
 pub fn part1() -> usize {
-    let s = "input/day12example.txt";
+    let s = "input/day12.txt";
     let mut caves = HashMap::new();
     caves.insert("start".to_string(), Cave::new(true));
     caves.insert("end".to_string(), Cave::new(true));
@@ -92,7 +92,7 @@ pub fn part1() -> usize {
 }
 
 pub fn part2() -> usize {
-    let s = "input/day12example.txt";
+    let s = "input/day12.txt";
     let mut caves = HashMap::new();
     caves.insert("start".to_string(), Cave::new(true));
     caves.insert("end".to_string(), Cave::new(true));
@@ -138,6 +138,10 @@ fn evolve(
 ) -> Path {
     let n = p.name();
     let r = &caves.get(n).unwrap().roads;
+    let explored = explored;
+    let mut clean = explored.clone();
+    clean.sort_unstable();
+    clean.dedup();
     if r.is_empty() {
         p
     } else {
@@ -145,19 +149,12 @@ fn evolve(
             n.clone(),
             r.iter()
                 .filter_map(|s| {
-                    if !explored.contains(s) {
-                        let mut first_explored = first_explored;
+                    if !explored.contains(s) || (first_explored && explored.len() == clean.len()) {
                         let c = caves.get(s).unwrap();
                         let mut n = explored.clone();
-                        let mut r = n.clone();
                         let mut res = vec![];
-                        if !c.big && !first_explored {
+                        if !c.big {
                             n.push(s.clone());
-                            r.push(s.clone());
-                        } else if !c.big {
-                            n.push(s.clone());
-                            first_explored = false;
-                            res.push(evolve(Path::Leaf(s.clone()), r, caves, first_explored));
                         }
                         res.push(evolve(Path::Leaf(s.clone()), n, caves, first_explored));
                         Some(res)
